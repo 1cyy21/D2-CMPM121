@@ -4,3 +4,8 @@ canvas {
   touch-action: none;
   cursor: crosshair;
 }
+
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}

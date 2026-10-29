@@ -1,12 +1,21 @@
 import "./style.css";
 // Stroke data
-import { strokes } from "./model.ts";
+import {
+  canRedo,
+  canUndo,
+  commitStroke,
+  redo,
+  strokes,
+  undo,
+} from "./model.ts";
 import type { Point, Stroke, StrokeStyle } from "./model.ts";
 // Rendering
 import { renderScene } from "./render.ts";
 
 const canvas = document.querySelector<HTMLCanvasElement>("#canvas")!;
 const redrawBtn = document.querySelector<HTMLButtonElement>("#redraw")!;
+const undoBtn = document.querySelector<HTMLButtonElement>("#undo")!;
+const redoBtn = document.querySelector<HTMLButtonElement>("#redo")!;
 const ctx = canvas.getContext("2d")!;
 const currentStyle: StrokeStyle = { width: 4, color: "#222" };
 
@@ -15,6 +24,8 @@ let currentStroke: Stroke | null = null;
 // Draw Scene
 function render() {
   renderScene(ctx, strokes, currentStroke);
+  undoBtn.disabled = !canUndo();
+  redoBtn.disabled = !canRedo();
 }
 
 // Turn mouse position into canvas position
@@ -46,12 +57,22 @@ canvas.addEventListener("pointermove", (event) => {
 
 canvas.addEventListener("pointerup", () => {
   if (!currentStroke) return;
-  strokes.push(currentStroke);
+  commitStroke(currentStroke);
   currentStroke = null;
   render();
 });
 canvas.addEventListener("pointercancel", () => {
   currentStroke = null;
+  render();
+});
+
+undoBtn.addEventListener("click", () => {
+  undo();
+  render();
+});
+
+redoBtn.addEventListener("click", () => {
+  redo();
   render();
 });
 
