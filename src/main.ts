@@ -23,6 +23,7 @@ const nameInput = document.querySelector<HTMLInputElement>("#nameInput")!;
 const stickerInput = document.querySelector<HTMLInputElement>("#stickerInput")!;
 const addSticker = document.querySelector<HTMLButtonElement>("#addSticker")!;
 const brushSelect = document.querySelector<HTMLSelectElement>("#brushSelect")!;
+const exportBtn = document.querySelector<HTMLButtonElement>("#export")!;
 const ctx = canvas.getContext("2d")!;
 let currentStyle: StrokeStyle = { width: 4, color: "#222", sticker: "" };
 
@@ -126,6 +127,30 @@ addSticker.addEventListener("click", () => {
 brushSelect.addEventListener("change", () => {
   const tool = tools.find((tool) => tool.content === brushSelect.value);
   if (tool) currentStyle = { ...tool.style };
+});
+
+// Export PNG
+const EXPORT_SCALE = 2;
+
+exportBtn.addEventListener("click", () => {
+  const exportCanvas = document.createElement("canvas");
+  exportCanvas.width = canvas.width * EXPORT_SCALE;
+  exportCanvas.height = canvas.height * EXPORT_SCALE;
+  const exportCtx = exportCanvas.getContext("2d")!;
+
+  exportCtx.scale(EXPORT_SCALE, EXPORT_SCALE);
+
+  renderScene(exportCtx, strokes, null, "white");
+
+  exportCanvas.toBlob((blob) => {
+    if (!blob) return;
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "sketch.png";
+    link.click();
+    URL.revokeObjectURL(url);
+  }, "image/png");
 });
 
 // Developer Check: wipe canvas and redraw

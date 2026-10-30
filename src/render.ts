@@ -30,8 +30,18 @@ export function renderScene(
   ctx: CanvasRenderingContext2D,
   strokes: Stroke[],
   currentStroke: Stroke | null,
+  background?: string,
 ) {
+  ctx.save();
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+  if (background) {
+    ctx.fillStyle = background;
+    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+  }
+  ctx.restore();
+
   for (const stroke of strokes) {
     drawStroke(ctx, stroke);
   }
