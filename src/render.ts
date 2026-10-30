@@ -6,6 +6,9 @@ export function drawStroke(ctx: CanvasRenderingContext2D, stroke: Stroke) {
 
   ctx.save();
   if ((style.sticker != "") && (style.color == "")) {
+    ctx.font = "32px serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
     ctx.fillText(style.sticker, points[0].x, points[0].y);
   } else {
     ctx.lineWidth = style.width;
