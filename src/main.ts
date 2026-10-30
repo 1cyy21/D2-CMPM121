@@ -39,8 +39,8 @@ appendDropdown("Top Hat", "🎩");
 
 options.forEach((element) => {
   const add = document.createElement("option");
-  add.value = element.name;
-  add.textContent = element.content;
+  add.textContent = element.name;
+  add.value = element.content;
   dropdown?.appendChild(add);
 });
 
@@ -112,14 +112,14 @@ nameInput.addEventListener("input", () => {
 let stickerIcon = "";
 
 stickerInput.addEventListener("input", () => {
-  stickerIcon = nameInput.value;
+  stickerIcon = stickerInput.value;
 });
 
 addSticker.addEventListener("click", () => {
   if ((stickerIcon != "") && (stickerName != "")) {
     const add = document.createElement("option");
-    add.value = stickerName;
-    add.textContent = stickerIcon;
+    add.textContent = stickerName;
+    add.value = stickerIcon;
     dropdown?.appendChild(add);
     appendDropdown(stickerName, stickerIcon);
   }
@@ -127,11 +127,12 @@ addSticker.addEventListener("click", () => {
 
 brushSelect.addEventListener("change", () => {
   const choice = options.find((options) =>
-    options.name === brushSelect.value
+    options.content === brushSelect.value
   )?.content ?? "";
-  if (brushSelect.value == "Thin Brush") {
+  console.log(choice);
+  if (brushSelect.value == "ThinBrush") {
     currentStyle = { width: 4, color: "#222", sticker: "" };
-  } else if (brushSelect.value == "Thick Brush") {
+  } else if (brushSelect.value == "ThickBrush") {
     currentStyle = { width: 8, color: "#222", sticker: "" };
   } else {
     currentStyle = { width: 1, color: "", sticker: choice };
