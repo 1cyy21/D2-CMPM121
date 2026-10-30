@@ -1,13 +1,13 @@
 import "./style.css";
 // Stroke data
 import {
-  appendDropdown,
+  addTool,
   canRedo,
   canUndo,
   commitStroke,
-  options,
   redo,
   strokes,
+  tools,
   undo,
 } from "./model.ts";
 import type { Point, Stroke, StrokeStyle } from "./model.ts";
@@ -27,20 +27,20 @@ let currentStyle: StrokeStyle = { width: 4, color: "#222", sticker: "" };
 
 let currentStroke: Stroke | null = null;
 
-// Starter Dropdown Options
+// Starter Dropdown Tools
 
 const dropdown = document.getElementById("brushSelect");
 
-appendDropdown("Thin Brush", "ThinBrush");
-appendDropdown("Thick Brush", "ThickBrush");
-appendDropdown("Smiley Face", "☺️");
-appendDropdown("Pumpkin", "🎃");
-appendDropdown("Top Hat", "🎩");
+addTool("Thin Brush", "ThinBrush", { width: 4, color: "#222", sticker: "" });
+addTool("Thick Brush", "ThickBrush", { width: 8, color: "#222", sticker: "" });
+addTool("Smiley Face", "☺️", { width: 1, color: "", sticker: "☺️" });
+addTool("Pumpkin", "🎃", { width: 1, color: "", sticker: "🎃" });
+addTool("Top Hat", "🎩", { width: 1, color: "", sticker: "🎩" });
 
-options.forEach((element) => {
+tools.forEach((tool) => {
   const add = document.createElement("option");
-  add.textContent = element.name;
-  add.value = element.content;
+  add.textContent = tool.name;
+  add.value = tool.content;
   dropdown?.appendChild(add);
 });
 
@@ -121,22 +121,18 @@ addSticker.addEventListener("click", () => {
     add.textContent = stickerName;
     add.value = stickerIcon;
     dropdown?.appendChild(add);
-    appendDropdown(stickerName, stickerIcon);
+    addTool(stickerName, stickerIcon, {
+      width: 1,
+      color: "",
+      sticker: stickerIcon,
+    });
   }
 });
 
+// Repeated Switches: Moved each tool's style into its definition, removing the "if" chain
 brushSelect.addEventListener("change", () => {
-  const choice = options.find((options) =>
-    options.content === brushSelect.value
-  )?.content ?? "";
-  console.log(choice);
-  if (brushSelect.value == "ThinBrush") {
-    currentStyle = { width: 4, color: "#222", sticker: "" };
-  } else if (brushSelect.value == "ThickBrush") {
-    currentStyle = { width: 8, color: "#222", sticker: "" };
-  } else {
-    currentStyle = { width: 1, color: "", sticker: choice };
-  }
+  const tool = tools.find((tool) => tool.content === brushSelect.value);
+  if (tool) currentStyle = { ...tool.style };
 });
 
 // Developer Check: wipe canvas and redraw

@@ -13,13 +13,14 @@ export interface Stroke {
   points: Point[];
   style: StrokeStyle;
 }
-
-export interface Dropdown {
+// Mysterious Name: refactored by renaming Dropdown to Tool, since it is 1 drawing tool
+export interface Tool {
   name: string;
   content: string;
+  style: StrokeStyle;
 }
 
-export const options: Dropdown[] = [];
+export const tools: Tool[] = [];
 
 export const strokes: Stroke[] = [];
 
@@ -49,10 +50,11 @@ export function redo() {
   if (stroke) strokes.push(stroke);
 }
 
-export function appendDropdown(name: string, content: string) {
-  const newOption: Dropdown = {
-    name: name,
-    content: content,
-  };
-  options.push(newOption);
+// Renamed to for clearer reference to refactored Tool inteface
+export function addTool(
+  name: string,
+  content: string,
+  style: StrokeStyle,
+) {
+  tools.push({ name, content, style });
 }
