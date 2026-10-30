@@ -1,9 +1,11 @@
 import "./style.css";
 // Stroke data
 import {
+  appendDropdown,
   canRedo,
   canUndo,
   commitStroke,
+  options,
   redo,
   strokes,
   undo,
@@ -16,20 +18,37 @@ const canvas = document.querySelector<HTMLCanvasElement>("#canvas")!;
 const redrawBtn = document.querySelector<HTMLButtonElement>("#redraw")!;
 const undoBtn = document.querySelector<HTMLButtonElement>("#undo")!;
 const redoBtn = document.querySelector<HTMLButtonElement>("#redo")!;
-const thinBtn = document.querySelector<HTMLButtonElement>("#thinBrush")!;
-const thickBtn = document.querySelector<HTMLButtonElement>("#thickBrush")!;
+const nameInput = document.querySelector<HTMLInputElement>("#nameInput")!;
+const stickerInput = document.querySelector<HTMLInputElement>("#stickerInput")!;
+const addSticker = document.querySelector<HTMLSelectElement>("#addSticker")!;
+const brushSelect = document.querySelector<HTMLSelectElement>("#brushSelect")!;
 const ctx = canvas.getContext("2d")!;
-const currentStyle: StrokeStyle = { width: 4, color: "#222" };
+let currentStyle: StrokeStyle = { width: 4, color: "#222", sticker: "" };
 
 let currentStroke: Stroke | null = null;
+
+// Starter Dropdown Options
+
+const dropdown = document.getElementById("brushSelect");
+
+appendDropdown("Thin Brush", "ThinBrush");
+appendDropdown("Thick Brush", "ThickBrush");
+appendDropdown("Smiley Face", "☺️");
+appendDropdown("Pumpkin", "🎃");
+appendDropdown("Top Hat", "🎩");
+
+options.forEach((element) => {
+  const add = document.createElement("option");
+  add.value = element.name;
+  add.textContent = element.content;
+  dropdown?.appendChild(add);
+});
 
 // Draw Scene
 function render() {
   renderScene(ctx, strokes, currentStroke);
   undoBtn.disabled = !canUndo();
   redoBtn.disabled = !canRedo();
-  thinBtn.disabled = currentStyle.width == 4;
-  thickBtn.disabled = currentStyle.width == 8;
 }
 
 // Turn mouse position into canvas position
@@ -70,6 +89,8 @@ canvas.addEventListener("pointercancel", () => {
   render();
 });
 
+// Undo/Redo Buttons
+
 undoBtn.addEventListener("click", () => {
   undo();
   render();
@@ -80,14 +101,41 @@ redoBtn.addEventListener("click", () => {
   render();
 });
 
-thinBtn.addEventListener("click", () => {
-  currentStyle.width = 4;
-  render();
+// Add new sticker
+
+let stickerName = "";
+
+nameInput.addEventListener("input", () => {
+  stickerName = nameInput.value;
 });
 
-thickBtn.addEventListener("click", () => {
-  currentStyle.width = 8;
-  render();
+let stickerIcon = "";
+
+stickerInput.addEventListener("input", () => {
+  stickerIcon = nameInput.value;
+});
+
+addSticker.addEventListener("click", () => {
+  if ((stickerIcon != "") && (stickerName != "")) {
+    const add = document.createElement("option");
+    add.value = stickerName;
+    add.textContent = stickerIcon;
+    dropdown?.appendChild(add);
+    appendDropdown(stickerName, stickerIcon);
+  }
+});
+
+brushSelect.addEventListener("change", () => {
+  const choice = options.find((options) =>
+    options.name === brushSelect.value
+  )?.content ?? "";
+  if (brushSelect.value == "Thin Brush") {
+    currentStyle = { width: 4, color: "#222", sticker: "" };
+  } else if (brushSelect.value == "Thick Brush") {
+    currentStyle = { width: 8, color: "#222", sticker: "" };
+  } else {
+    currentStyle = { width: 1, color: "", sticker: choice };
+  }
 });
 
 // Developer Check: wipe canvas and redraw

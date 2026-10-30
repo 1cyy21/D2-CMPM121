@@ -6,12 +6,20 @@ export interface Point {
 export interface StrokeStyle {
   width: number;
   color: string;
+  sticker: string;
 }
 
 export interface Stroke {
   points: Point[];
   style: StrokeStyle;
 }
+
+export interface Dropdown {
+  name: string;
+  content: string;
+}
+
+export const options: Dropdown[] = [];
 
 export const strokes: Stroke[] = [];
 
@@ -39,4 +47,12 @@ export function undo() {
 export function redo() {
   const stroke = redoStack.pop();
   if (stroke) strokes.push(stroke);
+}
+
+export function appendDropdown(name: string, content: string) {
+  const newOption: Dropdown = {
+    name: name,
+    content: content,
+  };
+  options.push(newOption);
 }

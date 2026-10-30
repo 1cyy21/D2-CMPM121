@@ -5,17 +5,21 @@ export function drawStroke(ctx: CanvasRenderingContext2D, stroke: Stroke) {
   if (points.length === 0) return;
 
   ctx.save();
-  ctx.lineWidth = style.width;
-  ctx.strokeStyle = style.color;
-  ctx.lineCap = "round";
-  ctx.lineJoin = "round";
-
-  ctx.beginPath();
-  ctx.moveTo(points[0].x, points[0].y);
-  for (const point of points.slice(1)) {
-    ctx.lineTo(point.x, point.y);
+  if ((style.sticker != "") && (style.color == "")) {
+    ctx.fillText(style.sticker, points[0].x, points[0].y);
+  } else {
+    ctx.lineWidth = style.width;
+    ctx.strokeStyle = style.color;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.beginPath();
+    ctx.moveTo(points[0].x, points[0].y);
+    for (const point of points.slice(1)) {
+      ctx.lineTo(point.x, point.y);
+    }
+    ctx.stroke();
   }
-  ctx.stroke();
+
   ctx.restore();
 }
 
