@@ -18,31 +18,38 @@ const canvas = document.querySelector<HTMLCanvasElement>("#canvas")!;
 const redrawBtn = document.querySelector<HTMLButtonElement>("#redraw")!;
 const undoBtn = document.querySelector<HTMLButtonElement>("#undo")!;
 const redoBtn = document.querySelector<HTMLButtonElement>("#redo")!;
+const clearPixels = document.querySelector<HTMLButtonElement>("#clearPixels")!;
 const nameInput = document.querySelector<HTMLInputElement>("#nameInput")!;
 const stickerInput = document.querySelector<HTMLInputElement>("#stickerInput")!;
-const addSticker = document.querySelector<HTMLSelectElement>("#addSticker")!;
+const addSticker = document.querySelector<HTMLButtonElement>("#addSticker")!;
 const brushSelect = document.querySelector<HTMLSelectElement>("#brushSelect")!;
 const ctx = canvas.getContext("2d")!;
 let currentStyle: StrokeStyle = { width: 4, color: "#222", sticker: "" };
 
 let currentStroke: Stroke | null = null;
 
-// Starter Dropdown Tools
+// To add tools, then show in dropdown
+function registerTool(name: string, content: string, style: StrokeStyle) {
+  addTool(name, content, style);
+  const option = document.createElement("option");
+  option.textContent = name;
+  option.value = content;
+  brushSelect.appendChild(option);
+}
 
-const dropdown = document.getElementById("brushSelect");
-
-addTool("Thin Brush", "ThinBrush", { width: 4, color: "#222", sticker: "" });
-addTool("Thick Brush", "ThickBrush", { width: 8, color: "#222", sticker: "" });
-addTool("Smiley Face", "☺️", { width: 1, color: "", sticker: "☺️" });
-addTool("Pumpkin", "🎃", { width: 1, color: "", sticker: "🎃" });
-addTool("Top Hat", "🎩", { width: 1, color: "", sticker: "🎩" });
-
-tools.forEach((tool) => {
-  const add = document.createElement("option");
-  add.textContent = tool.name;
-  add.value = tool.content;
-  dropdown?.appendChild(add);
+registerTool("Thin Brush", "ThinBrush", {
+  width: 4,
+  color: "#222",
+  sticker: "",
 });
+registerTool("Thick Brush", "ThickBrush", {
+  width: 8,
+  color: "#222",
+  sticker: "",
+});
+registerTool("Smiley Face", "☺️", { width: 1, color: "", sticker: "☺️" });
+registerTool("Pumpkin", "🎃", { width: 1, color: "", sticker: "🎃" });
+registerTool("Top Hat", "🎩", { width: 1, color: "", sticker: "🎩" });
 
 // Draw Scene
 function render() {
@@ -101,35 +108,21 @@ redoBtn.addEventListener("click", () => {
   render();
 });
 
-// Add new sticker
-
-let stickerName = "";
-
-nameInput.addEventListener("input", () => {
-  stickerName = nameInput.value;
-});
-
-let stickerIcon = "";
-
-stickerInput.addEventListener("input", () => {
-  stickerIcon = stickerInput.value;
+// Clear pixels on screen
+clearPixels.addEventListener("click", () => {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 });
 
 addSticker.addEventListener("click", () => {
-  if ((stickerIcon != "") && (stickerName != "")) {
-    const add = document.createElement("option");
-    add.textContent = stickerName;
-    add.value = stickerIcon;
-    dropdown?.appendChild(add);
-    addTool(stickerName, stickerIcon, {
-      width: 1,
-      color: "",
-      sticker: stickerIcon,
-    });
-  }
+  const name = nameInput.value.trim();
+  const icon = stickerInput.value.trim();
+  if (name === "" || icon === "") return;
+  registerTool(name, icon, { width: 1, color: "", sticker: icon });
+  nameInput.value = "";
+  stickerInput.value = "";
 });
 
-// Repeated Switches: Moved each tool's style into its definition, removing the "if" chain
+// Selecting a tool copies its style from tool's data
 brushSelect.addEventListener("change", () => {
   const tool = tools.find((tool) => tool.content === brushSelect.value);
   if (tool) currentStyle = { ...tool.style };
@@ -140,3 +133,5 @@ redrawBtn.addEventListener("click", () => {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   render();
 });
+
+render();

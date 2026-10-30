@@ -13,7 +13,7 @@ export interface Stroke {
   points: Point[];
   style: StrokeStyle;
 }
-// Mysterious Name: refactored by renaming Dropdown to Tool, since it is 1 drawing tool
+
 export interface Tool {
   name: string;
   content: string;
@@ -50,7 +50,6 @@ export function redo() {
   if (stroke) strokes.push(stroke);
 }
 
-// Renamed to for clearer reference to refactored Tool inteface
 export function addTool(
   name: string,
   content: string,
