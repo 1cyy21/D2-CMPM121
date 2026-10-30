@@ -7,6 +7,8 @@ import {
   redo,
   strokes,
   undo,
+  thickBrush,
+  thinBrush,
 } from "./model.ts";
 import type { Point, Stroke, StrokeStyle } from "./model.ts";
 // Rendering
@@ -16,16 +18,21 @@ const canvas = document.querySelector<HTMLCanvasElement>("#canvas")!;
 const redrawBtn = document.querySelector<HTMLButtonElement>("#redraw")!;
 const undoBtn = document.querySelector<HTMLButtonElement>("#undo")!;
 const redoBtn = document.querySelector<HTMLButtonElement>("#redo")!;
+const thinBtn = document.querySelector<HTMLButtonElement>("#thinBrush")!;
+const thickBtn = document.querySelector<HTMLButtonElement>("#thickBrush")!;
 const ctx = canvas.getContext("2d")!;
-const currentStyle: StrokeStyle = { width: 4, color: "#222" };
+let currentStyle: StrokeStyle = { width: 4, color: "#222" };
 
 let currentStroke: Stroke | null = null;
+
 
 // Draw Scene
 function render() {
   renderScene(ctx, strokes, currentStroke);
   undoBtn.disabled = !canUndo();
   redoBtn.disabled = !canRedo();
+  thinBtn.disabled = (currentStyle.width == 4);
+  thickBtn.disabled = (currentStyle.width == 8);
 }
 
 // Turn mouse position into canvas position
@@ -73,6 +80,16 @@ undoBtn.addEventListener("click", () => {
 
 redoBtn.addEventListener("click", () => {
   redo();
+  render();
+});
+
+thinBtn.addEventListener("click", () => {
+  currentStyle.width = 4;
+  render();
+});
+
+thickBtn.addEventListener("click", () => {
+  currentStyle.width = 8;
   render();
 });
 
